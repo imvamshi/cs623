@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.treesimilarity;
+package com.wvu.treesimilarity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +17,16 @@ public class Node {
     private int Number = 0;
     private List<Node> Children = new ArrayList<Node>();
     private Node Parent;
-    
+
+    public Node() {
+
+    }
+
     Node (String value) {
         Value = value;
         Parent = null;
     }
-    
+
     Node (int value) {
         Value = String.valueOf(value);
         Parent = null;
@@ -157,12 +161,12 @@ public class Node {
         }
     }
     
-    public Node getFirstchild() {
+    public Node getFirstChild() {
         if (Children.isEmpty()){
             return null;
         }
         else {
-            return Children.get(Children.size()-1);
+            return Children.get(0);
         }
     }
     
