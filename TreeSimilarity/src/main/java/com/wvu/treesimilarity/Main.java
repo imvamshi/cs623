@@ -32,8 +32,18 @@ public class Main {
     public static int normalizedLCS(String A, String B) {
         return (int) (LCS(A, B) / Math.sqrt(A.length() * B.length()));
     }
-    public  static int getDepth(int node) {
-        return 0;
+    public static int getDepth(Node node) {
+//        return 1; // only for debugging purposes
+        if(node == null) return 0;
+        int depth = 0;
+        Node it = node.getParent();
+        while(it != null) {
+//            System.out.print("Parent of " + node.getValue() + " is ");
+            it = it.getParent();
+            depth++;
+//            System.out.println(node.getParent().getValue());
+        }
+        return depth;
     }
 
     public  static int getParent(int node) {
@@ -81,32 +91,30 @@ public class Main {
     public static void main(String[] args) {
 
         /* Tree S construction */
-        Node root = new Node();
-        root.setValue("a");
+        Node root = new Node("a");
 
         root.addChild(new Node("b"));
         root.addChild(new Node("d"));
         Node rootsChild = root.getLastChild();
         root.addChild(new Node("c"));
 
-        rootsChild.addChild("c");
-        rootsChild.addChild("d");
+        rootsChild.addChild(new Node("c"));
+        rootsChild.addChild(new Node("d"));
 
         System.out.println("Root first child " + root.getFirstChild().getValue());
         System.out.println("Root last child " + root.getLastChild().getValue());
         System.out.println("Root Value " + root.getValue());
 
         /* Tree T construction */
-        Node root2 = new Node();
-        root2.setValue("a");
+        Node root2 = new Node("a");
 
         root2.addChild(new Node("b"));
         root2.addChild(new Node("c"));
         rootsChild = root2.getLastChild();
         root2.addChild(new Node("d"));
 
-        rootsChild.addChild("d");
-        rootsChild.addChild("c");
+        rootsChild.addChild(new Node("d"));
+        rootsChild.addChild(new Node("c"));
 
         System.out.println("Root first child " + root2.getFirstChild().getValue());
         System.out.println("Root last child " + root2.getLastChild().getValue());
@@ -125,45 +133,96 @@ public class Main {
         for(Node node: nodeListA) {
             System.out.print(node.getValue() + " - (" + nodeHashA.get(node) + ", " + getParentIndex(node, nodeHashA) + ")\n");
         }
+        /* Below code to test isLeaf() functionality */
+//        for(Node node: nodeListA) {
+//            System.out.print("Node " + node.getValue() + " is ");
+//            System.out.println((node.isLeaf() == true) ? "Leaf" : "Not Leaf");
+//        }
 
         System.out.println("Pre-Order traversal of tree T");
         System.out.println(Arrays.toString(traverseIndexB.list.toArray()));
 
         List<Node> nodeListB = traverseIndexB.nodeList;
         Hashtable<Node, Integer> nodeHashB = traverseIndexB.nodeHash;
+
+        /* Below code to test getParent() functionality */
+//        for(Node node: nodeListB) {
+//            System.out.print("Node " + node.getValue() + "'s parent is ");
+//            System.out.println(node.getParent() != null ? node.getParent().getValue() : "NULL");
+//        }
+
         /* Below prints the index mentioned in the example 4 */
         for(Node node: nodeListB) {
             System.out.print(node.getValue() + " - (" + nodeHashB.get(node) + ", " + getParentIndex(node, nodeHashB) + ")\n");
         }
 
+        /* Number of leaves calculation */
+        int noLeavesA = 0, noLeavesB = 0;
+        for(Node node: nodeListA) if(node.isLeaf()) noLeavesA++;
+        for(Node node: nodeListB) if(node.isLeaf()) noLeavesB++;
 
         /* Code to calculate dtwLcs */
-        int m = 4; // Number of nodes in Tree A
-        int n = 5; // Number of nodes in Tree B
-        double[][] dtwLcs = new double[m][n];
-        int[][] lcs = new int[m][n];
+        int m = traverseIndexA.list.size(); // Number of nodes in Tree A
+        int n = traverseIndexB.list.size(); // Number of nodes in Tree B
+        System.out.println("m = " + m + " n = " +  n);
+
+//        double[][] dtwLcs = new double[m + 1][n + 1];
+        double[][] dtwLcs = new double[noLeavesA + 1][noLeavesA * noLeavesB + 1];
+        int[][] lcs = new int[m + 1][n + 1];
+
+        lcs[0][0] = 0;
+        dtwLcs[0][0] = 0.0;
+
+        for(int i = 0; i <= m ; i++) {
+            lcs[i][0] = 0;
+        }
+        for(int j = 0; j <= n ; j++) {
+            lcs[0][j] = 0;
+        }
+
+        for(int i = 0; i <= noLeavesA ; i++) {
+            dtwLcs[i][0] = 0.0;
+        }
+        for(int j = 0; j <= noLeavesA * noLeavesB ; j++) {
+            dtwLcs[0][j] = 0.0;
+        }
+
         int k = 1, l = 1;
-//        for (int i = 0; i < m; i++) {
-//            for (int j = 0; j < n; j++) {
-//                /* lcs[i][j] calculation */
-//                /* If label(i) equals label(j) */
-//                if(true) {
-//                    lcs[i][j] = 1 + lcs[getParent(i)][getParent(j)];
-//                } else {
-//                    lcs[i][j] = Math.max(lcs[getParent(i)][j], lcs[j][getParent(j)]);
-//                }
-//                /* If i and j are leaves, then calculate DTW */
-//                if(true) {
-//                    dtwLcs[k][l] = 1 - (lcs[i][j] * 1.0)/(Math.sqrt(getDepth(i) * getDepth(j)));
-//                    dtwLcs[k][l] += Math.min(dtwLcs[k - 1][l], Math.min(dtwLcs[k][l - 1], dtwLcs[k - 1][l - 1]));
-//                    l++;
-//                }
-//            }
-//            /* If i is leaf */
-//            if(true) {
-//                k++;
-//            }
-//        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                /* lcs[i][j] calculation */
+                if(i == 0 || j == 0) {
+                    lcs[i][j] = 0;
+                } else {
+                    /* If label(i) equals label(j) */
+                    if(nodeListA.get(i - 1).getValue().equals(nodeListB.get(j - 1).getValue())) {
+                        lcs[i][j] = 1 + lcs[getParentIndex(nodeListA.get(i - 1), nodeHashA)][getParentIndex(nodeListB.get(j - 1), nodeHashB)];
+                    } else {
+                        lcs[i][j] = Math.max(lcs[getParentIndex(nodeListA.get(i - 1), nodeHashA)][j], lcs[i][getParentIndex(nodeListB.get(j - 1), nodeHashB)]);
+                    }
+                }
+
+                /* If i and j are leaves, then calculate DTW */
+                if(nodeListA.get(i - 1).isLeaf() && nodeListB.get(j - 1).isLeaf()) {
+                    System.out.println("= 1 - " + ((lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j))))));
+                    dtwLcs[k][l] = 1 - ((lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j)))));
+//                    System.out.println(1 - (lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j)))));
+                    dtwLcs[k][l] += Math.min(dtwLcs[k - 1][l], Math.min(dtwLcs[k][l - 1], dtwLcs[k - 1][l - 1]));
+                    l++;
+                }
+            }
+            /* If i is leaf */
+            if(nodeListA.get(i - 1).isLeaf()) {
+                k++;
+            }
+        }
+
+        for(int i = 0; i <= noLeavesA; i++) {
+            for(int j = 0; j <= noLeavesA * noLeavesB; j++) {
+                System.out.print(dtwLcs[i][j] + " ");
+            }
+            System.out.println();
+        }
         System.out.println("Given trees are distant by " + Double.toString(dtwLcs[k - 1][l - 1]));
     }
 }
