@@ -1,13 +1,13 @@
 package com.wvu.treesimilarity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.Vector;
+import java.util.*;
 
 import static java.lang.Math.min;
-
+class TraverseIndex {
+    List<String> list;
+    List<Node> nodeList;
+    Hashtable<Node, Integer> nodeHash;
+}
 public class Main {
 
     public static int LCS(String A, String B) {
@@ -40,9 +40,15 @@ public class Main {
         return 0;
     }
 
-    public static List<String> preOrderTraversal(Node root) {
+    public static TraverseIndex preOrderTraversal(Node root) {
+        TraverseIndex traverseIndex = new TraverseIndex();
         List<String> list = new ArrayList<>();
-        if(root == null) return list;
+        Hashtable<Node, Integer> nodeHash = new Hashtable<Node, Integer>();
+        List<Node> nodeList = new ArrayList<>();
+//        nodeHash.put(null, 0); // Index of root's parent is 0
+
+        int nodeCount = 1;
+        if(root == null) return traverseIndex;
 
         Stack<Node> stack = new Stack<>();
         stack.add(root);
@@ -50,14 +56,30 @@ public class Main {
         while(!stack.empty()) {
             root = stack.pop();
             list.add(root.getValue());
+            nodeHash.put(root, nodeCount++);
+            nodeList.add(root);
+            System.out.println("Added " + root.getValue() + " id is " + nodeCount);
+
             for(int i = root.getNumberOfChildren() - 1; i >= 0; i--) {
                 stack.add(root.getChildren().get(i));
             }
         }
-        return list;
+        traverseIndex.list = list;
+        traverseIndex.nodeHash = nodeHash;
+        traverseIndex.nodeList = nodeList;
+        return traverseIndex;
+    }
+
+    public static int getParentIndex(Node node, Hashtable<Node, Integer> nodeHash) {
+        if (node.getParent() == null) {
+            return 0;
+        } else {
+            return nodeHash.get(node.getParent());
+        }
     }
 
     public static void main(String[] args) {
+
         /* Tree S construction */
         Node root = new Node();
         root.setValue("a");
@@ -91,18 +113,29 @@ public class Main {
         System.out.println("Root Value " + root2.getValue());
 
         /* Pre-order traversals of both trees */
+        TraverseIndex traverseIndexA = preOrderTraversal(root);
+        TraverseIndex traverseIndexB = preOrderTraversal(root2);
+
         System.out.println("Pre-Order traversal of tree S");
-        System.out.println(Arrays.toString(preOrderTraversal(root).toArray()));
+        System.out.println(Arrays.toString(traverseIndexA.list.toArray()));
+
+        List<Node> nodeListA = traverseIndexA.nodeList;
+        Hashtable<Node, Integer> nodeHashA = traverseIndexA.nodeHash;
+        /* Below prints the index mentioned in the example 4 */
+        for(Node node: nodeListA) {
+            System.out.print(node.getValue() + " - (" + nodeHashA.get(node) + ", " + getParentIndex(node, nodeHashA) + ")\n");
+        }
 
         System.out.println("Pre-Order traversal of tree T");
-        System.out.println(Arrays.toString(preOrderTraversal(root2).toArray()));
+        System.out.println(Arrays.toString(traverseIndexB.list.toArray()));
 
-        // write your code here
-        Vector<String> S = new Vector<String>();
-        S.add("ab");
-        S.add("adc");
-        S.add("add");
-        S.add("ac");
+        List<Node> nodeListB = traverseIndexB.nodeList;
+        Hashtable<Node, Integer> nodeHashB = traverseIndexB.nodeHash;
+        /* Below prints the index mentioned in the example 4 */
+        for(Node node: nodeListB) {
+            System.out.print(node.getValue() + " - (" + nodeHashB.get(node) + ", " + getParentIndex(node, nodeHashB) + ")\n");
+        }
+
 
         /* Code to calculate dtwLcs */
         int m = 4; // Number of nodes in Tree A

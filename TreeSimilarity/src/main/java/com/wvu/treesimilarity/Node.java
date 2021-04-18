@@ -19,7 +19,7 @@ public class Node {
     private Node Parent;
 
     public Node() {
-
+        Parent = null;
     }
 
     Node (String value) {
