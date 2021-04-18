@@ -204,9 +204,7 @@ public class Main {
 
                 /* If i and j are leaves, then calculate DTW */
                 if(nodeListA.get(i - 1).isLeaf() && nodeListB.get(j - 1).isLeaf()) {
-                    System.out.println("= 1 - " + ((lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j))))));
                     dtwLcs[k][l] = 1 - ((lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j)))));
-//                    System.out.println(1 - (lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j)))));
                     dtwLcs[k][l] += Math.min(dtwLcs[k - 1][l], Math.min(dtwLcs[k][l - 1], dtwLcs[k - 1][l - 1]));
                     l++;
                 }
@@ -217,6 +215,7 @@ public class Main {
             }
         }
 
+        /* dtwLcs array */
         for(int i = 0; i <= noLeavesA; i++) {
             for(int j = 0; j <= noLeavesA * noLeavesB; j++) {
                 System.out.print(dtwLcs[i][j] + " ");
