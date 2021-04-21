@@ -2,6 +2,7 @@ package com.wvu.treesimilarity;
 
 import java.util.*;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.min;
 class TraverseIndex {
     List<String> list;
@@ -10,7 +11,7 @@ class TraverseIndex {
 }
 public class Main {
 
-    public static int LCS(String A, String B) {
+    public static double LCS(String A, String B) {
         /* matrix for storing results of the sub-problems, size is
          * one more than the string length to store the base case
          * results*/
@@ -27,21 +28,45 @@ public class Main {
                 }
             }
         }
-        return dp[A.length()][B.length()];
+        return dp[A.length()][B.length()] / Math.sqrt(A.length() * B.length());
     }
+
+    public static double TED(String A, String B) {
+        int m = A.length();
+        int n = B.length();
+
+        int[][] cost = new int[m + 1][n + 1];
+        for(int i = 0; i <= m; i++)
+            cost[i][0] = i;
+        for(int i = 1; i <= n; i++)
+            cost[0][i] = i;
+
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(A.charAt(i) == B.charAt(j))
+                    cost[i + 1][j + 1] = cost[i][j];
+                else {
+                    int a = cost[i][j];
+                    int b = cost[i][j + 1];
+                    int c = cost[i + 1][j];
+                    cost[i + 1][j + 1] = a < b ? (a < c ? a : c) : (b < c ? b : c);
+                    cost[i + 1][j + 1]++;
+                }
+            }
+        }
+        return 1 - (cost[m][n] / Math.sqrt(A.length() * B.length()));
+    }
+
     public static int normalizedLCS(String A, String B) {
         return (int) (LCS(A, B) / Math.sqrt(A.length() * B.length()));
     }
     public static int getDepth(Node node) {
-//        return 1; // only for debugging purposes
         if(node == null) return 0;
         int depth = 0;
         Node it = node.getParent();
         while(it != null) {
-//            System.out.print("Parent of " + node.getValue() + " is ");
             it = it.getParent();
             depth++;
-//            System.out.println(node.getParent().getValue());
         }
         return depth;
     }
@@ -85,6 +110,43 @@ public class Main {
             return 0;
         } else {
             return nodeHash.get(node.getParent());
+        }
+    }
+
+    public static List<String> rootToLeafPaths(Node node, List<String> store, String path) {
+        if(node == null) {
+            return store;
+        }
+        path = path + node.getValue();
+        if(node.isLeaf()) {
+            store.add(path);
+        } else {
+            for(int i = node.getNumberOfChildren() - 1; i >= 0; i--) {
+                store = rootToLeafPaths(node.getChildren().get(i), store, path);
+            }
+        }
+        return store;
+    }
+
+    public static void printTable(double table[][], int nRow, int nCol) {
+        for(int i = 0; i < nRow; i++) {
+            for (int j = 0; j < nCol; j++) {
+                System.out.print(fixedLengthString(Double.toString(table[i][j]), 6) + "  ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static String fixedLengthString(String string, int length) {
+//        return String.format("%010d", string);
+        if(length <= string.length()) {
+            return string.substring(0, length);
+        } else {
+            String printSpace = "";
+            for (int i = 0; i < length - string.length(); i++) {
+                printSpace += " ";
+            }
+            return string + printSpace;
         }
     }
 
@@ -188,8 +250,9 @@ public class Main {
         }
 
         int k = 1, l = 1;
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
                 /* lcs[i][j] calculation */
                 if(i == 0 || j == 0) {
                     lcs[i][j] = 0;
@@ -201,16 +264,18 @@ public class Main {
                         lcs[i][j] = Math.max(lcs[getParentIndex(nodeListA.get(i - 1), nodeHashA)][j], lcs[i][getParentIndex(nodeListB.get(j - 1), nodeHashB)]);
                     }
                 }
+//                System.out.println("LCS = " + lcs[i][j]);
 
                 /* If i and j are leaves, then calculate DTW */
-                if(nodeListA.get(i - 1).isLeaf() && nodeListB.get(j - 1).isLeaf()) {
+                if((i > 0 && j > 0) && nodeListA.get(i - 1).isLeaf() && nodeListB.get(j - 1).isLeaf()) {
+                    System.out.println("value = " + ((lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j))))));
                     dtwLcs[k][l] = 1 - ((lcs[i][j] * 1.0)/(Math.sqrt(getDepth(nodeListA.get(i)) * getDepth(nodeListB.get(j)))));
                     dtwLcs[k][l] += Math.min(dtwLcs[k - 1][l], Math.min(dtwLcs[k][l - 1], dtwLcs[k - 1][l - 1]));
                     l++;
                 }
             }
             /* If i is leaf */
-            if(nodeListA.get(i - 1).isLeaf()) {
+            if((i > 0) && nodeListA.get(i - 1).isLeaf()) {
                 k++;
             }
         }
@@ -218,10 +283,53 @@ public class Main {
         /* dtwLcs array */
         for(int i = 0; i <= noLeavesA; i++) {
             for(int j = 0; j <= noLeavesA * noLeavesB; j++) {
-                System.out.print(dtwLcs[i][j] + " ");
+                System.out.print(Double.toString(dtwLcs[i][j]).length() > 4 ? Double.toString(dtwLcs[i][j]).substring(0, 8) + " " : Double.toString(dtwLcs[i][j]) + " ");
+//                System.out.print(Double.toString(dtwLcs[i][j]) + " ");
             }
             System.out.println();
         }
-        System.out.println("Given trees are distant by " + Double.toString(dtwLcs[k - 1][l - 1]));
+        System.out.println();
+//        for(int i = 0; i <= m; i++) {
+//            for(int j = 0; j <= n; j++) {
+//                System.out.print(lcs[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+        System.out.println("Given trees are distant by " + Double.toString(dtwLcs[k - 1][l - 1]) + "\n\n");
+
+        List<String> treeASeqs = new ArrayList<>();
+        List<String> treeBSeqs = new ArrayList<>();
+        /* MultiDimensional Sequences of Tree A */
+        treeASeqs = rootToLeafPaths(root, treeASeqs, "");
+        /* MultiDimensional Sequences of Tree B */
+        treeBSeqs = rootToLeafPaths(root2, treeBSeqs, "");
+
+        System.out.println("Sequences of Tree A: " + Arrays.toString(treeASeqs.toArray()));
+        System.out.println("Sequences of Tree B: " + Arrays.toString(treeBSeqs.toArray()));
+
+        /* dLCS and dTED construction */
+        double[][] dLCS = new double[treeASeqs.size()][treeBSeqs.size()];
+        double[][] dTED = new double[treeASeqs.size()][treeBSeqs.size()];
+        double[][] avg = new double[treeASeqs.size()][treeBSeqs.size()];
+
+        for(int i = 0; i < treeASeqs.size(); i++) {
+            for (int j = 0; j < treeBSeqs.size(); j++) {
+                dLCS[i][j] = LCS(treeASeqs.get(i), treeBSeqs.get(j));
+                dTED[i][j] = TED(treeASeqs.get(i), treeBSeqs.get(j));
+            }
+        }
+
+        /* Printing dLCS table */
+        System.out.println("\ndLCS of sequences");
+        printTable(dLCS, treeASeqs.size(), treeBSeqs.size());
+
+        /* Printing dTED table */
+        System.out.println("\ndTED of sequences");
+        printTable(dTED, treeASeqs.size(), treeBSeqs.size());
+
+        /* Average of both */
+        // Final table
+        // (
+
     }
 }
