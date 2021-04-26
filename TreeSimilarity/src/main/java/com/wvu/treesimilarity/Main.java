@@ -4,12 +4,21 @@ import java.util.*;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.min;
+
+
 class TraverseIndex {
     List<String> list;
     List<Node> nodeList;
     Hashtable<Node, Integer> nodeHash;
 }
+
+
 public class Main {
+    
+    public static Node Tree1Root;
+    public static Node Tree2Root;
+    //public static Hashtable<Node, Integer> nodeHashA;
+   // public static Hashtable<Node, Integer> nodeHashB;
 
     public static double LCS(String A, String B) {
         /* matrix for storing results of the sub-problems, size is
@@ -149,42 +158,63 @@ public class Main {
             return string + printSpace;
         }
     }
-
-    public static void main(String[] args) {
-
+    
+    public static double NormalAverageTable(double table[][], int nRow, int nCol) {
+        double sum = 0;
+        double avg = 0;
+        int numOfElements = nRow * nCol;
+        for( int i=0; i < nCol; i++) {
+            for( int j = 0; j < nRow; j++){
+                sum = sum + table[i][j];
+            }
+        }
+        avg = sum/numOfElements;
+        
+        return avg;
+    }
+    
+    public static void buildTree() {
         /* Tree S construction */
-        Node root = new Node("a");
+        Tree1Root = new Node("a");
 
-        root.addChild(new Node("b"));
-        root.addChild(new Node("d"));
-        Node rootsChild = root.getLastChild();
-        root.addChild(new Node("c"));
+        Tree1Root.addChild(new Node("b"));
+        Tree1Root.addChild(new Node("d"));
+        Node rootsChild = Tree1Root.getLastChild();
+        Tree1Root.addChild(new Node("c"));
 
         rootsChild.addChild(new Node("c"));
         rootsChild.addChild(new Node("d"));
 
-        System.out.println("Root first child " + root.getFirstChild().getValue());
-        System.out.println("Root last child " + root.getLastChild().getValue());
-        System.out.println("Root Value " + root.getValue());
+        System.out.println("Root first child " + Tree1Root.getFirstChild().getValue());
+        System.out.println("Root last child " + Tree1Root.getLastChild().getValue());
+        System.out.println("Root Value " + Tree1Root.getValue());
 
         /* Tree T construction */
-        Node root2 = new Node("a");
+        Tree2Root = new Node("a");
 
-        root2.addChild(new Node("b"));
-        root2.addChild(new Node("c"));
-        rootsChild = root2.getLastChild();
-        root2.addChild(new Node("d"));
+        Tree2Root.addChild(new Node("b"));
+        Tree2Root.addChild(new Node("c"));
+        rootsChild = Tree2Root.getLastChild();
+        Tree2Root.addChild(new Node("d"));
 
         rootsChild.addChild(new Node("d"));
         rootsChild.addChild(new Node("c"));
 
-        System.out.println("Root first child " + root2.getFirstChild().getValue());
-        System.out.println("Root last child " + root2.getLastChild().getValue());
-        System.out.println("Root Value " + root2.getValue());
+        System.out.println("Root first child " + Tree2Root.getFirstChild().getValue());
+        System.out.println("Root last child " + Tree2Root.getLastChild().getValue());
+        System.out.println("Root Value " + Tree2Root.getValue());
+        
+    }
+    
+    
+
+    public static void main(String[] args) {
+        
+        buildTree();
 
         /* Pre-order traversals of both trees */
-        TraverseIndex traverseIndexA = preOrderTraversal(root);
-        TraverseIndex traverseIndexB = preOrderTraversal(root2);
+        TraverseIndex traverseIndexA = preOrderTraversal(Tree1Root);
+        TraverseIndex traverseIndexB = preOrderTraversal(Tree2Root);
 
         System.out.println("Pre-Order traversal of tree S");
         System.out.println(Arrays.toString(traverseIndexA.list.toArray()));
@@ -300,9 +330,9 @@ public class Main {
         List<String> treeASeqs = new ArrayList<>();
         List<String> treeBSeqs = new ArrayList<>();
         /* MultiDimensional Sequences of Tree A */
-        treeASeqs = rootToLeafPaths(root, treeASeqs, "");
+        treeASeqs = rootToLeafPaths(Tree1Root, treeASeqs, "");
         /* MultiDimensional Sequences of Tree B */
-        treeBSeqs = rootToLeafPaths(root2, treeBSeqs, "");
+        treeBSeqs = rootToLeafPaths(Tree2Root, treeBSeqs, "");
 
         System.out.println("Sequences of Tree A: " + Arrays.toString(treeASeqs.toArray()));
         System.out.println("Sequences of Tree B: " + Arrays.toString(treeBSeqs.toArray()));
@@ -326,6 +356,17 @@ public class Main {
         /* Printing dTED table */
         System.out.println("\ndTED of sequences");
         printTable(dTED, treeASeqs.size(), treeBSeqs.size());
+        
+        double avgOfdLCS = NormalAverageTable(dLCS, treeASeqs.size(), treeBSeqs.size());
+        System.out.println("\nAverage of LCS table: " + avgOfdLCS);
+        
+        double avgOfdTED = NormalAverageTable(dTED, treeASeqs.size(), treeBSeqs.size());
+        System.out.println("\nAverage of TED table: " + avgOfdTED);
+        
+        System.out.println("\nAverage of both: " + (avgOfdLCS + avgOfdTED)/2);
+        
+        
+        
 
         /* Average of both */
         // Final table
