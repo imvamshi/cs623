@@ -13,7 +13,7 @@ package com.wvu.treesimilarity;
 /*
 TODO: Set way to control and manipulate node numbers?
 */
-public class Tree {
+public class Tree extends Node{
     private Node Root;
     int Index;
     

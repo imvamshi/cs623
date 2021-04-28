@@ -173,7 +173,18 @@ public class Main {
         return avg;
     }
     
-    public static void buildTree() {
+    public static double[][] addTables(double table1[][], double table2[][], int nRow, int nCol) {
+        double tableResult[][] = new double[nRow][nCol];
+        for( int i=0; i < nCol; i++) {
+            for( int j = 0; j < nRow; j++){
+                tableResult[i][j] = table1[i][j] + table2[i][j];
+            }
+        }
+        
+        return tableResult;
+    }
+    
+    public static void buildDefaultTrees() {
         /* Tree S construction */
         Tree1Root = new Node("a");
 
@@ -206,11 +217,75 @@ public class Main {
         
     }
     
+    public static String getRandomLetter(){
+        Random r = new Random();
+        char c = (char)(r.nextInt(26) + 'a');
+        
+        return Character.toString(c);
+    }
+    
+    public static int getRandomNumberBetween(int max, int min) {
+        Random rand = new Random();
+        int randomNum = rand.nextInt((max - min) + 1) + min;
+        return randomNum;
+    }
+    
+
+    public static Node buildRandomTree(int depth, int maxLeaves){
+        
+        Node root = new Node(getRandomLetter());
+        depth--;
+        System.out.println("Depth " + depth);
+        int numOfLeaves = getRandomNumberBetween(maxLeaves, 1);
+        for (int i=0; i<numOfLeaves; i++){
+                String letter = getRandomLetter();
+                System.out.println("Adding child " + letter+ " at depth " + depth);
+                root.addChild(letter);
+        }
+        depth--;
+        if (depth > 0) {
+            List<Node> nodes = root.getChildren();
+            for (int i=0; i<numOfLeaves; i++){
+                   Node child = nodes.get(i);
+                   Node node = buildRandomTree(depth, maxLeaves, child);
+                   root.addChild(node);
+            }
+        }
+        
+        return root;
+    }
+    
+    public static Node buildRandomTree(int depth, int maxLeaves, Node node){
+        
+        while(depth > 0) {
+            System.out.println("Depth: " + depth);
+            depth--;
+            int numOfLeaves = getRandomNumberBetween(maxLeaves, 1);
+            System.out.println("Number of leaves: " + numOfLeaves);
+            for (int i=0; i<numOfLeaves; i++){
+                String letter = getRandomLetter();
+                System.out.println("Adding child " + letter+ " at depth " + depth);
+                node.addChild(letter);
+            }
+
+            List<Node> nodes = node.getChildren();
+            for (int i=0; i<node.getNumberOfChildren(); i++){
+                   Node child = nodes.get(i);
+                   node = buildRandomTree(depth, maxLeaves, child);
+                   node.addChild(node);
+            }
+        }
+        
+        return node;
+    }
     
 
     public static void main(String[] args) {
         
-        buildTree();
+        buildDefaultTrees();
+        
+//        Tree1Root = buildRandomTree(2, 2);
+//        Tree2Root = buildRandomTree(2, 2);
 
         /* Pre-order traversals of both trees */
         TraverseIndex traverseIndexA = preOrderTraversal(Tree1Root);
@@ -358,19 +433,22 @@ public class Main {
         printTable(dTED, treeASeqs.size(), treeBSeqs.size());
         
         double avgOfdLCS = NormalAverageTable(dLCS, treeASeqs.size(), treeBSeqs.size());
-        System.out.println("\nAverage of LCS table: " + avgOfdLCS);
+            System.out.println("\nAverage of LCS table: " + avgOfdLCS);
         
         double avgOfdTED = NormalAverageTable(dTED, treeASeqs.size(), treeBSeqs.size());
-        System.out.println("\nAverage of TED table: " + avgOfdTED);
+            System.out.println("\nAverage of TED table: " + avgOfdTED);
         
-        System.out.println("\nAverage of both: " + (avgOfdLCS + avgOfdTED)/2);
+        System.out.println("\nAverage of both averages : " + (avgOfdLCS + avgOfdTED)/2);
         
-        
-        
+//        double dLCSAddedTodTED[][] = addTables(dLCS, dTED, treeASeqs.size(), treeBSeqs.size());
+//            System.out.println("\nThe two tables added together: ");
+//            printTable(dLCSAddedTodTED, treeASeqs.size(), treeBSeqs.size());
+//              
+//        double avgOfBothTables = NormalAverageTable(dLCSAddedTodTED, treeASeqs.size(), treeBSeqs.size());
+//            System.out.println("\nAverage of the two tabeles added together: " + avgOfBothTables);
+//        
 
-        /* Average of both */
-        // Final table
-        // (
+    Tree1Root = buildRandomTree(3, 3);
 
     }
 }
