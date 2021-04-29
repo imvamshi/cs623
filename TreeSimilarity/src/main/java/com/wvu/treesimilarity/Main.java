@@ -217,6 +217,74 @@ public class Main {
         
     }
     
+    public static void buildLongTree1() {
+
+        
+        Tree1Root = new Node("a");
+        
+        /*
+        Build tree from bottom lefthand side to top right
+        */
+        
+        //left side
+        Node node3 = new Node("a");
+            Node node4 = new Node("d");
+            Node node5 = new Node("c");     
+            node3.addChild(node4);
+            node3.addChild(node5);
+            
+        Node node6 = new Node("b");
+            Node node7 = new Node("a");
+            Node node8 = new Node("b");
+            node6.addChild(node7);
+            node6.addChild(node8);
+            
+        Node node2 = new Node("a");
+            node2.addChild(node3);
+            node2.addChild(node6);
+            
+        Tree1Root.addChild(node2);
+        
+        //middle
+        Node node9 = new Node("d");
+            Node node10 = new Node("a");
+            Node node11 = new Node("b");
+            Node node12 = new Node("d");
+            node9.addChild(node10);
+            node9.addChild(node11);
+            node9.addChild(node12);
+            
+        Node node13 = new Node("c");
+            Node node14 = new Node("c");
+            Node node15 = new Node("b");
+            node13.addChild(node14);
+            node13.addChild(node15);
+            
+        Tree1Root.addChild(node9);
+        Tree1Root.addChild(node13);
+        
+        //right side
+        Node node16 = new Node("a");
+            Node node17 = new Node("d");
+                Node node18 = new Node("b");
+                    //adding children 19 and 20
+                    node18.addChildren(new String[]{"c", "c"});
+                Node node21 = new Node("b");
+                    //adding children 22 and 23
+                    node21.addChildren(new String[]{"a", "b"});
+                node17.addChild(node18);
+                node17.addChild(node21);
+            node16.addChild(node17);
+            
+        Tree1Root.addChild(node16);
+        
+        System.out.println("Root first child " + Tree1Root.getFirstChild().getValue());
+        System.out.println("Root last child " + Tree1Root.getLastChild().getValue());
+        System.out.println("Root Value " + Tree1Root.getValue());
+        
+                      
+    }
+    
     public static String getRandomLetter(){
         Random r = new Random();
         char c = (char)(r.nextInt(26) + 'a');
@@ -440,15 +508,6 @@ public class Main {
         
         System.out.println("\nAverage of both averages : " + (avgOfdLCS + avgOfdTED)/2);
         
-//        double dLCSAddedTodTED[][] = addTables(dLCS, dTED, treeASeqs.size(), treeBSeqs.size());
-//            System.out.println("\nThe two tables added together: ");
-//            printTable(dLCSAddedTodTED, treeASeqs.size(), treeBSeqs.size());
-//              
-//        double avgOfBothTables = NormalAverageTable(dLCSAddedTodTED, treeASeqs.size(), treeBSeqs.size());
-//            System.out.println("\nAverage of the two tabeles added together: " + avgOfBothTables);
-//        
-
-    Tree1Root = buildRandomTree(3, 3);
 
     }
 }
