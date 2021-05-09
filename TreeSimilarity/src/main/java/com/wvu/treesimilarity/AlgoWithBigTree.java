@@ -8,20 +8,20 @@ import static java.lang.Math.PI;
 import static java.lang.Math.min;
 
 
-class TraverseIndex {
-    List<String> list;
-    List<Node> nodeList;
-    Hashtable<Node, Integer> nodeHash;
-}
+//class TraverseIndex {
+//    List<String> list;
+//    List<Node> nodeList;
+//    Hashtable<Node, Integer> nodeHash;
+//}
 
 
-public class Main {
+public class AlgoWithBigTree {
 
     public static boolean enablePrint = false;
     public static Node Tree1Root;
     public static Node Tree2Root;
     //public static Hashtable<Node, Integer> nodeHashA;
-   // public static Hashtable<Node, Integer> nodeHashB;
+    // public static Hashtable<Node, Integer> nodeHashB;
 
     public static double LCS(String A, String B) {
         /* matrix for storing results of the sub-problems, size is
@@ -161,21 +161,21 @@ public class Main {
             return string + printSpace;
         }
     }
-    
+
     public static double NormalAverageTable(double table[][], int nRow, int nCol) {
         double sum = 0;
         double avg = 0;
         int numOfElements = nRow * nCol;
-        for( int i=0; i < nCol; i++) {
+        for( int i = 0; i < nCol; i++) {
             for( int j = 0; j < nRow; j++){
                 sum = sum + table[i][j];
             }
         }
         avg = sum/numOfElements;
-        
+
         return avg;
     }
-    
+
     public static double[][] addTables(double table1[][], double table2[][], int nRow, int nCol) {
         double tableResult[][] = new double[nRow][nCol];
         for( int i=0; i < nCol; i++) {
@@ -183,12 +183,13 @@ public class Main {
                 tableResult[i][j] = table1[i][j] + table2[i][j];
             }
         }
-        
+
         return tableResult;
     }
-    
+
     public static void buildDefaultTrees() {
         /* Tree S construction */
+//        buildLongTree1();
         Tree1Root = new Node("a");
 
         Tree1Root.addChild(new Node("b"));
@@ -203,131 +204,177 @@ public class Main {
 //        if(enablePrint) System.out.println("Root last child " + Tree1Root.getLastChild().getValue());
 //        if(enablePrint) System.out.println("Root Value " + Tree1Root.getValue());
 
-        /* Tree T construction */
-        Tree2Root = new Node("a");
-
-        Tree2Root.addChild(new Node("b"));
-        Tree2Root.addChild(new Node("c"));
-        rootsChild = Tree2Root.getLastChild();
-        Tree2Root.addChild(new Node("d"));
-
-        rootsChild.addChild(new Node("d"));
-        rootsChild.addChild(new Node("c"));
 
 //        if(enablePrint) System.out.println("Root first child " + Tree2Root.getFirstChild().getValue());
 //        if(enablePrint) System.out.println("Root last child " + Tree2Root.getLastChild().getValue());
 //        if(enablePrint) System.out.println("Root Value " + Tree2Root.getValue());
-        
+
     }
-    
+
+    public static void buildLongTree2() {
+        /* Tree T construction */
+        Tree2Root = new Node("a");
+
+        Node node1 = new Node("a");
+        Node node2 = new Node("b");
+        Node node3 = new Node("c");
+        Node node4 = new Node("c");
+        node4.addChild(node1);
+        node4.addChild(node2);
+        node4.addChild(node3);
+
+        Node node5 = new Node("d");
+        Node node6 = new Node("c");
+        Node node7 = new Node("a");
+        node7.addChild(node5);
+        node7.addChild(node6);
+
+        Node node8 = new Node("d");
+        Node node9 = new Node("c");
+        Node node10 = new Node("c");
+        node10.addChild(node8);
+        node10.addChild(node9);
+
+        Node node11 = new Node("a");
+        Node node12 = new Node("b");
+        Node node13 = new Node("d");
+        node13.addChild(node11);
+        node13.addChild(node12);
+
+        Node node14 = new Node("a");
+        node14.addChild(node10);
+        node14.addChild(node13);
+
+        Node node15 = new Node("c");
+        Node node16 = new Node("a");
+        node16.addChild(node15);
+
+        Node node17 = new Node("b");
+        Node node18 = new Node("d");
+        Node node19 = new Node("d");
+        node19.addChild(node17);
+        node19.addChild(node18);
+
+        Node node20 = new Node("c");
+        node20.addChild(node16);
+        node20.addChild(node19);
+
+        Node node21 = new Node("b");
+        node20.addChild(node4);
+        node20.addChild(node7);
+
+        Tree2Root.addChild(node21);
+        Tree2Root.addChild(node14);
+        Tree2Root.addChild(node20);
+    }
     public static void buildLongTree1() {
 
-        
+
         Tree1Root = new Node("a");
-        
+
         /*
         Build tree from bottom lefthand side to top right
         */
-        
+
         //left side
         Node node3 = new Node("a");
-            Node node4 = new Node("d");
-            Node node5 = new Node("c");     
-            node3.addChild(node4);
-            node3.addChild(node5);
-            
+        Node node4 = new Node("d");
+        Node node5 = new Node("c");
+        node3.addChild(node4);
+        node3.addChild(node5);
+
         Node node6 = new Node("b");
-            Node node7 = new Node("a");
-            Node node8 = new Node("b");
-            node6.addChild(node7);
-            node6.addChild(node8);
-            
+        Node node7 = new Node("a");
+        Node node8 = new Node("b");
+        node6.addChild(node7);
+        node6.addChild(node8);
+
         Node node2 = new Node("a");
-            node2.addChild(node3);
-            node2.addChild(node6);
-            
+        node2.addChild(node3);
+        node2.addChild(node6);
+
         Tree1Root.addChild(node2);
-        
+
         //middle
         Node node9 = new Node("d");
-            Node node10 = new Node("a");
-            Node node11 = new Node("b");
-            Node node12 = new Node("d");
-            node9.addChild(node10);
-            node9.addChild(node11);
-            node9.addChild(node12);
-            
+        Node node10 = new Node("a");
+        Node node11 = new Node("b");
+        Node node12 = new Node("d");
+        node9.addChild(node10);
+        node9.addChild(node11);
+        node9.addChild(node12);
+
         Node node13 = new Node("c");
-            Node node14 = new Node("c");
-            Node node15 = new Node("b");
-            node13.addChild(node14);
-            node13.addChild(node15);
-            
+        Node node14 = new Node("c");
+        Node node15 = new Node("b");
+        node13.addChild(node14);
+        node13.addChild(node15);
+
         Tree1Root.addChild(node9);
         Tree1Root.addChild(node13);
-        
+
         //right side
         Node node16 = new Node("a");
-            Node node17 = new Node("d");
-                Node node18 = new Node("b");
-                    //adding children 19 and 20
-                    node18.addChildren(new String[]{"c", "c"});
-                Node node21 = new Node("b");
-                    //adding children 22 and 23
-                    node21.addChildren(new String[]{"a", "b"});
-                node17.addChild(node18);
-                node17.addChild(node21);
-            node16.addChild(node17);
-            
+        Node node17 = new Node("d");
+        Node node18 = new Node("b");
+        //adding children 19 and 20
+        node18.addChildren(new String[]{"c", "c"});
+        Node node21 = new Node("b");
+        //adding children 22 and 23
+        node21.addChildren(new String[]{"a", "b"});
+        node17.addChild(node18);
+        node17.addChild(node21);
+        node16.addChild(node17);
+
         Tree1Root.addChild(node16);
-        
+
         System.out.println("Root first child " + Tree1Root.getFirstChild().getValue());
         System.out.println("Root last child " + Tree1Root.getLastChild().getValue());
         System.out.println("Root Value " + Tree1Root.getValue());
-        
-                      
+
+
     }
-    
+
     public static String getRandomLetter(){
         Random r = new Random();
         char c = (char)(r.nextInt(26) + 'a');
-        
+
         return Character.toString(c);
     }
-    
+
     public static int getRandomNumberBetween(int max, int min) {
         Random rand = new Random();
         int randomNum = rand.nextInt((max - min) + 1) + min;
         return randomNum;
     }
-    
+
 
     public static Node buildRandomTree(int depth, int maxLeaves){
-        
+
         Node root = new Node(getRandomLetter());
         depth--;
         System.out.println("Depth " + depth);
         int numOfLeaves = getRandomNumberBetween(maxLeaves, 1);
         for (int i=0; i<numOfLeaves; i++){
-                String letter = getRandomLetter();
-                System.out.println("Adding child " + letter+ " at depth " + depth);
-                root.addChild(letter);
+            String letter = getRandomLetter();
+            System.out.println("Adding child " + letter+ " at depth " + depth);
+            root.addChild(letter);
         }
         depth--;
         if (depth > 0) {
             List<Node> nodes = root.getChildren();
             for (int i=0; i<numOfLeaves; i++){
-                   Node child = nodes.get(i);
-                   Node node = buildRandomTree(depth, maxLeaves, child);
-                   root.addChild(node);
+                Node child = nodes.get(i);
+                Node node = buildRandomTree(depth, maxLeaves, child);
+                root.addChild(node);
             }
         }
-        
+
         return root;
     }
-    
+
     public static Node buildRandomTree(int depth, int maxLeaves, Node node){
-        
+
         while(depth > 0) {
             System.out.println("Depth: " + depth);
             depth--;
@@ -341,19 +388,22 @@ public class Main {
 
             List<Node> nodes = node.getChildren();
             for (int i=0; i<node.getNumberOfChildren(); i++){
-                   Node child = nodes.get(i);
-                   node = buildRandomTree(depth, maxLeaves, child);
-                   node.addChild(node);
+                Node child = nodes.get(i);
+                node = buildRandomTree(depth, maxLeaves, child);
+                node.addChild(node);
             }
         }
-        
+
         return node;
     }
-    
+
 
     public static void main(String[] args) {
 
-        buildDefaultTrees();
+//        buildDefaultTrees();
+        buildLongTree1();
+        buildLongTree2();
+
         long startTimeDtwLcs = System.nanoTime();
 
         /* Pre-order traversals of both trees */
@@ -480,7 +530,11 @@ public class Main {
         long estimatedTimeInNanoS = System.nanoTime() - startTimeDtwLcs;
         long estimatedTimeInMilliS = TimeUnit.MILLISECONDS.convert(estimatedTimeInNanoS, TimeUnit.NANOSECONDS);
         System.out.println("Time taken to compute dtwLCS is " + Long.toString(estimatedTimeInNanoS) + " NanoSeconds");
-        System.out.println("Time taken to compute dtwLCS is " + Long.toString(estimatedTimeInNanoS/1000000) + " MilliSeconds");
+        System.out.println("Time taken to compute dtwLCS is " + Long.toString(estimatedTimeInMilliS) + " MilliSeconds");
+
+        /**
+         * dTED, dLCS Algorithm Starts
+         */
 
         long startTimeOurAlgo = System.nanoTime();
 
@@ -530,7 +584,6 @@ public class Main {
         System.out.println("\nAverage of TED table: " + avgOfdTED);
 
         System.out.println("\nAverage of both averages : " + (avgOfdLCS + avgOfdTED)/2);
-
 
     }
 }
